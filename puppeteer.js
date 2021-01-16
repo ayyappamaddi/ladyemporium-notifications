@@ -5,7 +5,12 @@ async function startPage() {
         headless: false,
         "userDataDir": "c:\\ayyappa\\practice\\ladyemporium-notification\\chromium-data"
     });
-    const page = await browser.newPage();
+
+
+    const context = await browser.createIncognitoBrowserContext();
+    let page = await context.newPage();
+
+    // const page = await browser.newPage();
     global.page = page;
     await page.goto('https://web.whatsapp.com', {
         waitUntil: 'networkidle0',
