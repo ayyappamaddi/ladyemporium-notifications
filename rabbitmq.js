@@ -8,9 +8,12 @@ async function queueOperation(channel) {
         channel.assertQueue('order_msg_queue', { durable: true });
         const onMsg = (msg) => {
             notifyUser.sendMsg(msg.content.toString())
-                .then(() => channel.ack(msg))
+                .then(() => {
+                    
+                    channel.ack(msg)
+                })
                 .catch((e) => {
-                    console.error('An error occured while channel operations during org provisioning', JSON.stringify(e));
+                    console.error('An error occured while handling msg', e.stack);
                     channel.ack(msg);
                 });
         };
@@ -26,6 +29,7 @@ async function msgChannel(connection) {
         console.log('creating channel');
         await connection.createChannel()
             .then(async (ch) => {
+                ch.prefetch(1);
                 await queueOperation(ch);
             })
             .catch(e => {
